@@ -1,26 +1,41 @@
-import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Platform, Text, View, StyleSheet } from 'react-native';
+import * as Location from 'expo-location';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android: 'Double tap R on your keyboard to reload,\n' + 'Shake or press menu button for dev menu',
 });
 
-console.log(navigator)
+export default function App() {
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
-export default class App extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>HEY Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
-      </View>
-    );
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  });
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
   }
-}
 
+  return (
+    <View style={styles.container}>
+      <Text style={styles.paragraph}>{text}</Text>
+    </View>
+  );
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
