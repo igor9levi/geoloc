@@ -35,7 +35,7 @@ export default function App() {
         console.log('CHECK: ', timesCalled, newTimesCalled);
         console.log('lat, long: ', loc.coords.latitude, loc.coords.longitude);
         // TODO: Push to API here
-        // setLocation(loc);
+        setLocation(loc);
       })
       } catch (err) {
         setErrorMsg(`FixMe loc: ${err.message}`);
