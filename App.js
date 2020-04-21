@@ -12,41 +12,44 @@ export default function App() {
   const [timesCalled, setTimesCalled] = useState(1);
   const [errorMsg, setErrorMsg] = useState(null);
 
- useEffect(() => {
-  let watcher = null;
-  (async () => {
-    try {
-      let { status } = await Location.requestPermissionsAsync();
-    if (status !== 'granted') {
-      setErrorMsg('Permission to access location was denied');
-    }
-  } catch (err) {
-    setErrorMsg(`FixMe: ${err.message}`);
-  }
-  
-  try {
-      watcher = await Location.watchPositionAsync({
-        accuracy: Location.Accuracy.BestForNavigation,
-        distanceInterval: 0,
-        timeInterval: 300,
-      }, (loc) => {
-        const newTimesCalled = timesCalled + 1;
-        setTimesCalled(timesCalled + 1)
-        console.log('CHECK: ', timesCalled, newTimesCalled);
-        console.log('lat, long: ', loc.coords.latitude, loc.coords.longitude);
-        // TODO: Push to API here
-        setLocation(loc);
-      })
+  useEffect(() => {
+    let watcher = null;
+    (async () => {
+      try {
+        const { status } = await Location.requestPermissionsAsync();
+        if (status !== 'granted') {
+          setErrorMsg('Permission to access location was denied');
+        }
+      } catch (err) {
+        setErrorMsg(`FixMe: ${err.message}`);
+      }
+
+      try {
+        watcher = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.BestForNavigation,
+            distanceInterval: 0,
+            timeInterval: 300,
+          },
+          (loc) => {
+            const newTimesCalled = timesCalled + 1;
+            setTimesCalled(timesCalled + 1);
+            console.log('CHECK: ', timesCalled, newTimesCalled);
+            console.log('lat, long: ', loc.coords.latitude, loc.coords.longitude);
+            // TODO: Push to API here
+            setLocation(loc);
+          }
+        );
       } catch (err) {
         setErrorMsg(`FixMe loc: ${err.message}`);
       }
-      console.log('Watcher: ', watcher)
-  })();
+      console.log('Watcher: ', watcher);
+    })();
 
-  return function cleanup() {
-    watcher.remove();
-  };
-}, [])
+    return function cleanup() {
+      watcher.remove();
+    };
+  }, []);
 
   let text = 'Loading...';
   if (errorMsg) {
