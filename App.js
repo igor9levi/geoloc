@@ -9,21 +9,46 @@ const instructions = Platform.select({
 
 export default function App() {
   const [location, setLocation] = useState(null);
+  const [timesCalled, setTimesCalled] = useState(1);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  useEffect(() => {
-    (async () => {
+ useEffect(() => {
+  let watcher = null;
+  (async () => {
+    try {
       let { status } = await Location.requestPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+    }
+  } catch (err) {
+    setErrorMsg(`FixMe: ${err.message}`);
+  }
+  
+  try {
+      watcher = await Location.watchPositionAsync({
+        accuracy: Location.Accuracy.BestForNavigation,
+        distanceInterval: 0,
+        timeInterval: 300,
+      }, (loc) => {
+        const newTimesCalled = timesCalled + 1;
+        setTimesCalled(timesCalled + 1)
+        console.log('CHECK: ', timesCalled, newTimesCalled);
+        console.log('lat, long: ', loc.coords.latitude, loc.coords.longitude);
+        // TODO: Push to API here
+        // setLocation(loc);
+      })
+      } catch (err) {
+        setErrorMsg(`FixMe loc: ${err.message}`);
       }
+      console.log('Watcher: ', watcher)
+  })();
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  });
+  return function cleanup() {
+    watcher.remove();
+  };
+}, [])
 
-  let text = 'Waiting..';
+  let text = 'Loading...';
   if (errorMsg) {
     text = errorMsg;
   } else if (location) {
@@ -32,6 +57,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.paragraph}>{timesCalled}</Text>
       <Text style={styles.paragraph}>{text}</Text>
     </View>
   );

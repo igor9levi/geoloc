@@ -1,9 +1,10 @@
 {
-  "devToolsPort": 19003,
-  "expoServerPort": 19001,
-  "packagerPort": 19004,
-  "packagerPid": 313,
-  "expoServerNgrokUrl": "https://3a-usj.anonymous.geoloc.exp.direct",
-  "packagerNgrokUrl": "https://packager.3a-usj.anonymous.geoloc.exp.direct",
-  "ngrokPid": 339
+  "devToolsPort": 19002,
+  "expoServerPort": 19000,
+  "packagerPort": 19001,
+  "packagerPid": 84888,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
+  "webpackServerPort": null
 }
