@@ -32,10 +32,7 @@ export default function App() {
             timeInterval: 300,
           },
           (loc) => {
-            const newTimesCalled = timesCalled + 1;
-            setTimesCalled(timesCalled + 1);
-            console.log('CHECK: ', timesCalled, newTimesCalled);
-            console.log('lat, long: ', loc.coords.latitude, loc.coords.longitude);
+            setTimesCalled((counter) => counter + 1);
             // TODO: Push to API here
             setLocation(loc);
           },
@@ -60,7 +57,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.paragraph}>{timesCalled}</Text>
+      <Text style={styles.paragraph}>Location has changed {timesCalled} times</Text>
       <Text style={styles.paragraph}>{text}</Text>
     </View>
   );
